@@ -1,0 +1,209 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Hand API",
+        "description": "Hand identification methods",
+        "version": "v1"
+    },
+    "host": "localhost:8020",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/v1",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/identifier": {
+            "get": {
+                "operationId": "identifier_v1",
+                "tags": ["identifier"],
+                "description": "Identifies high and low (if available) hand",
+                "parameters": [
+                    {
+                        "name": "game",
+                        "in": "query",
+                        "description": "A type of game",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "Holdem",
+                            "Omaha",
+                            "OmahaHighLow",
+                            "Razz",
+                            "Stud",
+                            "StudHighLow",
+                            "StudNoQ",
+                            "Draw",
+                            "Badugi",
+                            "LowballA5",
+                            "Lowball27",
+                            "TripleLowballA5",
+                            "TripleLowball27"
+                        ]
+                    },
+                    {
+                        "name": "pocket",
+                        "in": "query",
+                        "description": "A list of pocket cards (length of list depends on game type)",
+                        "required": true,
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": {
+                            "$ref": "#/definitions/Card"
+                        }
+                    },
+                    {
+                        "name": "board",
+                        "in": "query",
+                        "description": "A list of board cards (length of list depends on game type, can be empty)",
+                        "required": false,
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": {
+                            "$ref": "#/definitions/Card"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hand is identified",
+                        "schema": {
+                            "required": [
+                                "high"
+                            ],
+                            "type": "object",
+                            "properties": {
+                                "high": {
+                                    "$ref": "#/definitions/Hand"
+                                },
+                                "low": {
+                                    "$ref": "#/definitions/Hand"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Hand is not identified",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Card": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "enum": [
+                "As",
+                "2s",
+                "3s",
+                "4s",
+                "5s",
+                "6s",
+                "7s",
+                "8s",
+                "9s",
+                "Ts",
+                "Js",
+                "Qs",
+                "Ks",
+                "Ah",
+                "2h",
+                "3h",
+                "4h",
+                "5h",
+                "6h",
+                "7h",
+                "8h",
+                "9h",
+                "Th",
+                "Jh",
+                "Qh",
+                "Kh",
+                "Ad",
+                "2d",
+                "3d",
+                "4d",
+                "5d",
+                "6d",
+                "7d",
+                "8d",
+                "9d",
+                "Td",
+                "Jd",
+                "Qd",
+                "Kd",
+                "Ac",
+                "2c",
+                "3c",
+                "4c",
+                "5c",
+                "6c",
+                "7c",
+                "8c",
+                "9c",
+                "Tc",
+                "Jc",
+                "Qc",
+                "Kc"
+            ]
+        },
+        "Hand": {
+            "required": [
+                "hand",
+                "weight"
+            ],
+            "type": "object",
+            "properties": {
+                "hand": {
+                    "description": "Hand name",
+                    "type": "string",
+                    "enum": [
+                        "HighCard",
+                        "OnePair",
+                        "TwoPair",
+                        "Trips",
+                        "Straight",
+                        "Flush",
+                        "FullHouse",
+                        "Quads",
+                        "StraightFlush"
+                    ]
+                },
+                "weight": {
+                    "description": "Hand weight",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "comment": {
+                    "description": "Hand comment",
+                    "type": "string"
+                }
+            }
+        },
+        "Error": {
+            "required": [
+                "title"
+            ],
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Error title"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Error description"
+                }
+            }
+        }
+    }
+}
